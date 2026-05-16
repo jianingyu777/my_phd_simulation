@@ -1,0 +1,18 @@
+﻿criterion,status,evidence,notes
+two_sensor_classes_completed,pass,MODIS Terra polar orbiting and GOES ABI geostationary completed,
+polar_sensor_completed,pass,MODIS v1 processed scenes=81; objects=3830,
+geostationary_sensor_completed,pass,GOES H10 scenes=61.0; objects=5202.0,
+at_least_30_common_scenes,pass,common processed scenes=53,
+at_least_50_common_scenes,pass,common processed scenes=53,
+at_least_100_common_scenes,fail,common processed scenes=53,100+ common-scene target not reached
+detection_retention_available,pass,MODIS=0.015097; GOES_H10=0.038002,
+signal_retention_available,pass,MODIS_ref005=0.445971; GOES_H10_ref005=1.649003,
+retrieval_floor_available,pass,MOD06 product retrieval-floor fraction=0.629630,GOES product retrieval floor not evaluated
+morphology_specific_loss_available,pass,morphology rows=12,
+parallax_correction_completed_for_GOES,pass,formal GOES H10 primary and H8/H10/H12 sensitivity completed,
+bootstrap_CI_available,pass,"MODIS v1, GOES nominal v2, and GOES H10 v2.1 CI tables available",
+master_overlap_scene_list_available,pass,scene-sensor rows=142,
+main_figure_2_available,pass,combined=True; panels=6,
+minimum_standard,pass,"two sensor classes, >=30 common scenes, metrics, morphology, MOD06 retrieval-floor, parallax correction, CI, and figure available",
+strong_standard,pass,>=50 common scenes status from common_scenes=53,
+nature_target_standard,partial,Core evidence package complete but common scenes <100 and GOES cloud-product retrieval floor not yet evaluated,

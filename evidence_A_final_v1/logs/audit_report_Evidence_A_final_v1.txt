@@ -1,0 +1,43 @@
+Audit: Evidence Package A final v1
+audit overall status: PASS
+
+Checks:
+- PASS | master overlap scene list | E:\contrail_km_validation\outputs\evidence_A_final_v1\tables\evidence_A_master_overlap_scene_list.csv
+- PASS | four metrics summary | E:\contrail_km_validation\outputs\evidence_A_final_v1\tables\evidence_A_four_metrics_summary.csv
+- PASS | morphology loss summary | E:\contrail_km_validation\outputs\evidence_A_final_v1\tables\evidence_A_morphology_specific_loss_summary.csv
+- PASS | done standard check | E:\contrail_km_validation\outputs\evidence_A_final_v1\tables\evidence_A_done_standard_check.csv
+- PASS | README | E:\contrail_km_validation\outputs\evidence_A_final_v1\README_Evidence_A_final_v1.md
+- PASS | manuscript key numbers | E:\contrail_km_validation\outputs\evidence_A_final_v1\tables\manuscript_ready_key_numbers.csv
+- PASS | manuscript summary CN | E:\contrail_km_validation\outputs\evidence_A_final_v1\logs\manuscript_summary_CN.txt
+- PASS | manuscript summary EN | E:\contrail_km_validation\outputs\evidence_A_final_v1\logs\manuscript_summary_EN.txt
+- PASS | Main Fig. 2 panels | 6/6 panels
+- PASS | Main Fig. 2 combined figure | E:\contrail_km_validation\outputs\evidence_A_final_v1\figures\Main_Fig_2_Evidence_A_MODIS_GOES.png
+- PASS | protected unchanged: evidence_A_MODIS_v1 | latest=2026-05-13 17:56:14
+- PASS | protected unchanged: evidence_A_MODIS_v1_1_morphology | latest=2026-05-13 19:22:10
+- PASS | protected unchanged: evidence_A_MODIS_v1_2_cloud_product | latest=2026-05-14 13:09:44
+- PASS | protected unchanged: evidence_A_MODIS_GOES_joint_v1_smoke_test | latest=2026-05-14 23:38:46
+- PASS | protected unchanged: evidence_A_MODIS_GOES_joint_v2_full_61 | latest=2026-05-15 22:14:12
+- PASS | protected unchanged: evidence_A_MODIS_GOES_joint_v2_full_61_QC | latest=2026-05-16 12:44:14
+- PASS | protected unchanged: evidence_A_MODIS_GOES_joint_v2_1_parallax_corrected | latest=2026-05-16 15:07:22
+- PASS | MODIS detection retention non-empty | 0.015096816540859863
+- PASS | GOES H10 detection retention non-empty | 0.038001912045889104
+- PASS | MODIS signal retention non-empty | 0.4459710561261384
+- PASS | GOES H10 signal retention non-empty | 1.6490032771202054
+- PASS | MODIS product retrieval-floor non-empty | 0.6296296296296297
+- PASS | GOES product retrieval-floor marked not_evaluated | nominal=not_evaluated; H10=not_evaluated
+- PASS | minimum standard pass | pass
+- PASS | Nature target not overclaimed | partial
+- PASS | signal-floor and retrieval-floor kept separate in final derived tables | separate fields verified
+
+minimum_standard: pass
+strong_standard: pass
+nature_target_standard: partial
+final recommended next step: GOES-only full 131, SEVIRI IODC branch, or 100+ common-scene expansion
+
+Key metrics:
+- MODIS detection retention: 0.015096816540859863
+- MODIS signal-floor fraction: 0.9849031834591402
+- MODIS MOD06 product retrieval-floor fraction: 0.6296296296296297
+- GOES H10 detection retention: 0.038001912045889104
+- GOES H10 signal-floor fraction: 0.9619980879541109
+- Joint both floor fraction H10: 0.9385317878468563

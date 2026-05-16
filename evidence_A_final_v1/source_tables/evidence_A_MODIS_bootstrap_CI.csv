@@ -1,0 +1,5 @@
+﻿metric,estimate,ci_lower_95,ci_upper_95,n_bootstrap,n_scenes,bootstrap_unit
+detection_retention_object_weighted,0.015096816540859863,0.010965668615294868,0.019913030344694927,5000,81,sdgsat_scene_id
+signal_floor_fraction_object_weighted,0.9849031834591402,0.9800869696553051,0.9890343313847052,5000,81,sdgsat_scene_id
+signal_retention_median_valid_ref005,0.4459710561261384,0.3888656303149178,0.5146358556021314,5000,81,sdgsat_scene_id
+signal_retention_median_valid_ref010,0.36829722095498996,0.3217194173715848,0.4226733400714891,5000,81,sdgsat_scene_id

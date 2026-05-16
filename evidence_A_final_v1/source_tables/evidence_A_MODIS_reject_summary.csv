@@ -1,0 +1,7 @@
+﻿field,value,count
+status,reject,612
+status,ok,81
+reject_reason,no_modis_btd_file,612
+reject_reason,<blank>,81
+sdgsat_bt_status,<blank>,612
+sdgsat_bt_status,ok_cached,81

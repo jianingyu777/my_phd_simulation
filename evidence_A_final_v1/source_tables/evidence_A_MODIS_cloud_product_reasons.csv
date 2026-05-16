@@ -1,0 +1,7 @@
+﻿product_retrieval_floor_reason,count,usable_count,fraction
+not_evaluable_for_cot_nighttime_or_high_sza,2345,2345,0.6122715404699739
+no_object_support_on_cloud_grid,783,0,0.20443864229765013
+no_valid_cot,388,388,0.10130548302872062
+not_floor_valid_cot_retrieval,260,260,0.06788511749347259
+mostly_fill_cot,30,30,0.007832898172323759
+mostly_clear_cloud_mask,24,24,0.006266318537859008
