@@ -1,0 +1,45 @@
+{
+  "scene_id": "KX10_TIS_20230531_W72.75_N5.11_202300357274_L4B",
+  "btd_colorbar_range_K": [
+    -4.0,
+    4.0
+  ],
+  "plot_bounds_mask_crs": [
+    671574.6173737897,
+    614355.5434257495,
+    756574.6173737897,
+    699355.5434257495
+  ],
+  "full_scene_bounds_mask_crs": [
+    546596.1996522706,
+    401253.27760296466,
+    947852.1996522706,
+    749469.2776029647
+  ],
+  "roi_metadata": {
+    "roi_mode": "auto_retained_missed_window",
+    "roi_center_obj_id": 16,
+    "roi_size_km": 85.0,
+    "roi_retained_objects": 8,
+    "roi_missed_objects": 10,
+    "roi_class_categories": 3,
+    "roi_morphology_labels": 4
+  },
+  "mask_crs": "EPSG:32618",
+  "paths": {
+    "mask_30m": "\\\\192.168.3.111\\yujianing-contrails\\contrail_mask_mosaics\\KX10_TIS_20230531_W72.75_N5.11_202300357274_L4B_mask_mosaic.tif",
+    "sdgsat_bt11": "E:\\contrail_km_validation\\data\\processed\\sdgsat_bt\\KX10_TIS_20230531_W72.75_N5.11_202300357274_L4B_bt11_30m.tif",
+    "sdgsat_bt12": "E:\\contrail_km_validation\\data\\processed\\sdgsat_bt\\KX10_TIS_20230531_W72.75_N5.11_202300357274_L4B_bt12_30m.tif",
+    "modis_btd": "E:\\contrail_km_validation\\data\\processed\\modis_joint_goes_full_61\\KX10_TIS_20230531_W72.75_N5.11_202300357274_L4B_MODIS_btd_utm1km.tif",
+    "modis_json": "E:\\contrail_km_validation\\data\\processed\\modis_joint_goes_full_61\\KX10_TIS_20230531_W72.75_N5.11_202300357274_L4B_MODIS_btd_utm1km.json",
+    "goes_btd": "E:\\contrail_km_validation\\data\\processed\\goes_joint_full_61\\KX10_TIS_20230531_W72.75_N5.11_202300357274_L4B_GOES_ABI_btd13_15_utm2km.tif",
+    "goes_json": "E:\\contrail_km_validation\\data\\processed\\goes_joint_full_61\\KX10_TIS_20230531_W72.75_N5.11_202300357274_L4B_GOES_ABI_btd13_15_utm2km.json",
+    "goes_h10_support_cache": "E:\\contrail_km_validation\\outputs\\evidence_A_MODIS_GOES_joint_v2_1_parallax_corrected\\support_cache\\KX10_TIS_20230531_W72.75_N5.11_202300357274_L4B_H10_goes_pc_supports.npz"
+  },
+  "panel_outputs": [
+    "E:\\contrail_km_validation\\outputs\\main_fig2_nature_polish_v1\\panels\\panel_a_SDGSAT_30m.png",
+    "E:\\contrail_km_validation\\outputs\\main_fig2_nature_polish_v1\\panels\\panel_b_simulated_MODIS_GOES.png",
+    "E:\\contrail_km_validation\\outputs\\main_fig2_nature_polish_v1\\panels\\panel_c_real_MODIS_GOES.png",
+    "E:\\contrail_km_validation\\outputs\\main_fig2_nature_polish_v1\\panels\\panel_d_retained_missed.png"
+  ]
+}

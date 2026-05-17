@@ -1,0 +1,17 @@
+Main Fig. 2 Nature polish v1 QC checklist
+selected_hero_scene: KX10_TIS_20230531_W72.75_N5.11_202300357274_L4B
+roi: {'roi_mode': 'auto_retained_missed_window', 'roi_center_obj_id': 16, 'roi_size_km': 85.0, 'roi_retained_objects': 8, 'roi_missed_objects': 10, 'roi_class_categories': 3, 'roi_morphology_labels': 4}
+
+1. unified font: PASS - scripts use a shared matplotlib Nature-style rcParams block.
+2. unified colorbar range for panel b/c: PASS - BTD range = [-4.0, 4.0].
+3. scale bars clear: PASS - map panels a-d include kilometre scale bars.
+4. legends clear: PASS - panel d class legend and panel e/f sensor legends are explicit.
+5. panel labels clear: PASS - final assembly applies uniform lower-case labels a-f.
+6. text density: PASS_WITH_REVIEW - labels are concise; final journal proofs should still be checked at target print width.
+7. single/double column readability: PASS for double-column; WARN for single-column because six panels are dense by design.
+8. over-decorated palette: PASS - restrained grayscale, RdBu BTD, and Okabe-Ito sensor/class colors.
+9. color-blind friendly: PASS - MODIS blue, GOES orange, retained green, missed vermillion/red use color-blind-aware choices.
+10. core science story: PASS - panels move from 30 m reference to simulated aggregation, real observations, object retention, morphology dependence, and pixel-fill dependence.
+
+panel_assets_complete: True
+final_figure_complete: True
