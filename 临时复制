@@ -1,0 +1,438 @@
+Codex 指令：冻结 BT/BTD 物理定标并进入 P1 物理输入主实验
+
+当前 Physical Calibration Gate 已完成并更新：
+
+F:\20251122data\home\niuniu10\seg_contrail\P1_16bit_matching\outputs\physical_calibration_gate\PHYSICAL_CALIBRATION_GATE_REPORT.md
+
+当前状态：
+
+FINAL_STATUS = GREEN_BT_BTD
+raw16 trainable rows = 19,623
+complete Gain/Bias scenes = 792 / 792
+complete K1/K2 scenes = 792 / 792
+DN→radiance = supported
+radiance→BT = supported
+BT/BTD trainable rows = 19,623
+scene leakage = 0
+validation samples = 900
+invalid validation samples = 0
+pilot BT/BTD stacks = 200
+
+重要限定：
+
+本地没有找到 calib.xml/meta.xml；
+本次放行依据是 USER_CONFIRMED_OFFICIAL_SENSOR_CONSTANTS；
+因此必须补充 calibration provenance 文件，不能只在代码里写常数。
+
+不要重新匹配数据。
+不要修改 official scene split。
+不要回头救 remaining / abnormal samples。
+不要继续围绕 U-Net 反复调参。
+不要只生成 pilot stack 就停止。
+现在开始构建 P1 的 BT/BTD 物理输入主线。
+
+工作目录：
+
+F:\20251122data\home\niuniu10\seg_contrail\P1_16bit_matching
+
+关键输入：
+
+outputs\raw16_trainable_index_v1\raw16_trainable_index_v1.csv
+outputs\physical_calibration_gate\bt_btd_trainable_index_v0\bt_btd_trainable_index_v0.csv
+outputs\physical_calibration_gate\validation\dn_radiance_bt_validation_stats.csv
+outputs\physical_calibration_gate\PHYSICAL_CALIBRATION_GATE_REPORT.md
+outputs\training_manifests_v1
+outputs\p1_dataset_stats\mask_object_stats.csv
+
+请创建并运行以下脚本：
+
+scripts/48_freeze_physical_calibration_constants.py
+scripts/49_full_bt_btd_conversion_audit.py
+scripts/50_build_full_bt_btd_stack_cache_v1.py
+scripts/51_build_bt_btd_training_manifests.py
+scripts/52_train_maxvit_physical_input_baselines.py
+scripts/53_prepare_tplora_bt_btd_input_framework.py
+scripts/54_update_p1_physical_methods_draft.py
+48_freeze_physical_calibration_constants.py
+目标
+
+冻结 Gain/Bias/K1/K2 常数，生成可追溯 provenance 文件。
+
+输入
+--gate_report outputs\physical_calibration_gate\PHYSICAL_CALIBRATION_GATE_REPORT.md
+--bt_btd_index outputs\physical_calibration_gate\bt_btd_trainable_index_v0\bt_btd_trainable_index_v0.csv
+--out outputs\physical_calibration_gate\calibration_constants_freeze
+输出
+CALIBRATION_CONSTANTS_PROVENANCE.md
+calibration_constants_table.csv
+calibration_constants_manifest.json
+calibration_formula_reference.md
+必须包含
+constant_source_type = USER_CONFIRMED_OFFICIAL_SENSOR_CONSTANTS
+local_calib_xml_found = false
+local_meta_xml_found = false
+confirmation_date
+confirmed_by_user = true
+applicable_sensor = SDGSAT-1 TIS
+applicable_channels = TIS1 / TIS2 / TIS3
+applicable_levels = L4A / L4B, if confirmed
+applicable_years = 2022-2024, if confirmed
+radiance_unit = W m-2 sr-1 um-1, if confirmed
+BT_unit = K
+DN_to_radiance_formula = L_i = DN_i * Gain_i + Bias_i
+radiance_to_BT_formula = BT_i = K2_i / ln(K1_i / L_i + 1)
+band_order_assumption_or_confirmation
+特别要求
+
+如果以下任何内容没有证据，必须写成：
+
+unknown / user_confirmed / not_locally_verified
+
+不能伪装成 metadata verified。
+
+字段：
+
+applicable_level
+applicable_year
+band_order
+radiance_unit
+constant_source_document
+报告必须给出
+PUBLICATION_RISK_LEVEL:
+LOW / MODERATE / HIGH
+
+当前因为本地无 calib.xml/meta.xml，默认至少是：
+
+MODERATE until official citation/document is attached
+
+除非用户提供官方文档或 DOI / 手册 / 数据说明。
+
+49_full_bt_btd_conversion_audit.py
+目标
+
+对全部 19,623 行做 conversion audit，不只抽样 900 行。
+
+不需要保存所有 stack，只统计全量转换数值和异常。
+
+输入
+--bt_btd_index outputs\physical_calibration_gate\bt_btd_trainable_index_v0\bt_btd_trainable_index_v0.csv
+--out outputs\bt_btd_full_conversion_audit_v1
+输出
+full_bt_btd_conversion_audit.csv
+full_bt_btd_conversion_audit_summary.md
+invalid_or_suspicious_conversion_samples.csv
+bt_btd_value_distribution_by_split.csv
+bt_btd_value_distribution_by_level.csv
+bt_btd_value_distribution_by_year.csv
+每行统计
+image16_path
+label_path
+official_split
+scene_key
+sceneid
+level
+date
+read_status
+dn_min / dn_p1 / dn_p50 / dn_p99 / dn_max
+BT1_min / p1 / p50 / p99 / max
+BT2_min / p1 / p50 / p99 / max
+BT3_min / p1 / p50 / p99 / max
+BTD12_p1 / p50 / p99
+BTD23_p1 / p50 / p99
+BTD13_p1 / p50 / p99
+local_dBTD23_p1 / p50 / p99
+invalid_radiance_count
+invalid_BT_count
+bt_range_status
+btd_range_status
+recommended_action
+合理性规则
+
+宽松 BT 范围：
+
+180 K <= BT <= 360 K
+
+可疑：
+
+BT < 120 K
+BT > 450 K
+大量 invalid BT
+大量 negative radiance
+
+BTD 不设硬阈值，但需要标记极端值：
+
+|BTD| > 50 K
+recommended_action
+keep
+keep_but_flag_extreme_values
+reject_invalid_conversion
+needs_manual_qc
+summary 必须包含
+total rows
+valid conversion rows
+invalid conversion rows
+extreme BT rows
+extreme BTD rows
+distribution by split
+distribution by L4A/L4B
+distribution by year
+whether all 19,623 can enter BT/BTD training
+50_build_full_bt_btd_stack_cache_v1.py
+目标
+
+生成全量 BT/BTD training cache v1。
+
+输入
+--bt_btd_index outputs\physical_calibration_gate\bt_btd_trainable_index_v0\bt_btd_trainable_index_v0.csv
+--conversion_audit outputs\bt_btd_full_conversion_audit_v1\full_bt_btd_conversion_audit.csv
+--out outputs\bt_btd_stack_cache_v1
+--dtype float16
+输出
+bt_btd_stack_cache_index_v1.csv
+bt_btd_stack_cache_summary.md
+normalization_params_bt_btd_train_only.json
+preview_contact_sheets
+cache_files/
+stack 通道
+
+必须生成：
+
+BT1
+BT2
+BT3
+BTD12 = BT1 - BT2
+BTD23 = BT2 - BT3
+BTD13 = BT1 - BT3
+local_dBTD23 = BTD23 - median_filter(BTD23, window=31)
+
+可选额外生成：
+
+local_dBTD23_w51
+
+但训练主输入先用 w31。
+
+归一化规则
+
+必须只用 official train split 估计：
+
+per-channel p1
+per-channel p50
+per-channel p99
+mean
+std
+
+val/test 禁止参与参数估计。
+
+推荐训练标准化：
+
+clip to train p1-p99
+scale to 0-1
+save float16
+
+也要保留原始物理值统计，不要把 standardized cache 当成原始 BT。
+
+保存要求
+
+每个样本可以保存为：
+
+.npz
+
+包含：
+
+stack
+channel_names
+source_image16_path
+label_path
+scene_key
+official_split
+
+如果 .npz 训练读取太慢，可以后续改 zarr / hdf5，但第一版先保证正确。
+
+summary 必须包含
+cache rows generated
+cache rows skipped
+channel order
+dtype
+estimated storage
+normalization parameters
+train/val/test counts
+sample contact sheets generated
+51_build_bt_btd_training_manifests.py
+目标
+
+建立 BT/BTD 训练 manifest，与 8bit/raw16 official split 对齐。
+
+输入
+--cache_index outputs\bt_btd_stack_cache_v1\bt_btd_stack_cache_index_v1.csv
+--raw16_manifest outputs\training_manifests_v1\raw16_train.csv outputs\training_manifests_v1\raw16_val.csv outputs\training_manifests_v1\raw16_test.csv
+--image8_manifest outputs\training_manifests_v1\image8_train.csv outputs\training_manifests_v1\image8_val.csv outputs\training_manifests_v1\image8_test.csv
+--mask_stats outputs\p1_dataset_stats\mask_object_stats.csv
+--out outputs\bt_btd_training_manifests_v1
+输出
+bt_btd_train.csv
+bt_btd_val.csv
+bt_btd_test.csv
+paired_8bit_raw16_bt_btd_manifest.csv
+bt_btd_training_manifest_summary.md
+必须检查
+same official split
+same scene_key
+same label_path
+same number of rows, unless conversion audit rejected samples
+scene leakage = 0
+positive/negative distribution
+thin/small distribution
+hard-negative distribution
+52_train_maxvit_physical_input_baselines.py
+目标
+
+启动 P1 的强基线，不再只看 U-Net。
+
+实验
+
+请准备并优先运行：
+
+E2_8bit_maxvit_official
+E3_raw16_maxvit_official
+E4_bt_only_maxvit_official
+E5_btd_only_maxvit_official
+E6_bt_btd_local_maxvit_official
+
+其中输入为：
+
+E2: 8bit
+E3: raw16 3ch
+E4: BT1/BT2/BT3
+E5: BTD12/BTD23/BTD13
+E6: BT1/BT2/BT3/BTD12/BTD23/BTD13/local_dBTD23
+要求
+same official split
+same train/val/test samples
+same label
+same metrics
+same threshold protocol
+val-only threshold selection
+test threshold not tuned
+record negative-patch FPR
+record thin/small metrics
+record object-level metrics
+输出
+outputs\baseline_runs_v3\configs\
+outputs\baseline_runs_v3\E2_8bit_maxvit_official\training_summary.md
+outputs\baseline_runs_v3\E3_raw16_maxvit_official\training_summary.md
+outputs\baseline_runs_v3\E4_bt_only_maxvit_official\training_summary.md
+outputs\baseline_runs_v3\E5_btd_only_maxvit_official\training_summary.md
+outputs\baseline_runs_v3\E6_bt_btd_local_maxvit_official\training_summary.md
+
+outputs\baseline_eval_v3\maxvit_physical_input_metrics_summary.md
+outputs\baseline_eval_v3\maxvit_physical_input_stratified_metrics.csv
+outputs\baseline_eval_v3\maxvit_physical_input_threshold_calibration.csv
+如果 GPU 不够
+
+先按顺序运行：
+
+E2
+E4
+E6
+
+然后再补：
+
+E3
+E5
+
+E6 是最关键实验。
+
+summary 必须回答
+1. MaxViT 是否显著强于 U-Net；
+2. BT-only 是否优于 raw16；
+3. BTD-only 是否控制 FPR；
+4. BT+BTD+local 是否提升 thin/small recall；
+5. hard-negative FPR 是否下降；
+6. 是否值得进入 TP-LoRA BT/BTD 主实验；
+7. 是否存在物理输入反而退化的情况。
+53_prepare_tplora_bt_btd_input_framework.py
+目标
+
+把 TP-LoRA 框架从 raw16 输入升级到 BT/BTD 物理输入。
+
+暂时不需要跑完整训练，但必须完成 sanity。
+
+输入
+--bt_btd_manifest outputs\bt_btd_training_manifests_v1
+--out outputs\tplora_bt_btd_framework_v1
+模型输入
+
+主输入：
+
+X7 = [BT1, BT2, BT3, BTD12, BTD23, BTD13, local_dBTD23]
+
+消融输入：
+
+X3_BT
+X3_BTD
+X6_BT_BTD
+X7_BT_BTD_LOCAL
+需要准备的模型
+DINOv2 frozen + decoder
+DINOv2-LoRA rank8
+TP-LoRA no physics loss
+TP-LoRA + radiance/BTD consistency loss
+TP-LoRA + topology loss
+TP-LoRA + hard-negative suppression
+TP-LoRA full
+先做 sanity
+tiny overfit 16 samples
+small subset smoke test 5 epochs
+trainable parameter count
+LoRA injection check
+input channel adapter check
+输出
+DINOv2_TPLORA_BT_BTD_SANITY_REPORT.md
+configs\
+tiny_overfit_results.csv
+trainable_params_table.csv
+input_adapter_check.csv
+报告必须回答
+1. BT/BTD 7-channel adapter 是否正常；
+2. DINOv2 是否能接受 physical stack；
+3. LoRA Q/V 是否正确注入；
+4. trainable params 占比；
+5. tiny overfit 是否通过；
+6. 是否可以进入 TP-LoRA 正式训练；
+7. physics loss 需要哪些输入。
+54_update_p1_physical_methods_draft.py
+目标
+
+基于 GREEN_BT_BTD 更新 P1 manuscript skeleton。
+
+输入
+--gate_report outputs\physical_calibration_gate\PHYSICAL_CALIBRATION_GATE_REPORT.md
+--constants_provenance outputs\physical_calibration_gate\calibration_constants_freeze\CALIBRATION_CONSTANTS_PROVENANCE.md
+--stack_summary outputs\bt_btd_stack_cache_v1\bt_btd_stack_cache_summary.md
+--out outputs\manuscript_skeleton
+输出
+P1_methods_physical_input_draft.md
+P1_methods_calibration_draft.md
+P1_results_physical_input_placeholder.md
+P1_updated_title_options.md
+P1_physical_input_figure_plan.md
+标题候选
+
+现在可以升级为：
+
+SDGSAT-Contrail-30: A 30 m thermal-infrared BT/BTD benchmark and physics-regularized foundation-model adaptation for contrail segmentation
+
+或者更稳妥：
+
+SDGSAT-Contrail-30: A 30 m calibrated thermal-infrared benchmark and foundation-model adaptation for contrail segmentation
+
+如果 provenance 仍然只是 user-confirmed constants，则标题建议先用第二个，更稳。
+
+方法草稿必须包括
+DN to radiance formula
+radiance to brightness temperature formula
+BTD definitions
+local_dBTD23 definition
+train-only normalization
+scene-disjoint split
+calibration provenance limitation
